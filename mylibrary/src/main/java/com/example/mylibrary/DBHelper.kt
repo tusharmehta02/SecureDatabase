@@ -71,7 +71,7 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
     }
 
     fun getValue(key: String): Pair<String, String?> {
-        val selectQuery = "SELECT  * FROM $SAMPLE_TABLE_NAME where $KEY_DATA = $key"
+        val selectQuery = "SELECT  * FROM $SAMPLE_TABLE_NAME where $KEY_DATA = '$key'"
         var value: String? = null
         val c = db!!.rawQuery(selectQuery, null)
         if (c.moveToFirst()) {
@@ -80,7 +80,6 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
             } while (c.moveToNext())
         }
         val pair = Pair(key, value)
-
         return pair
     }
 
