@@ -1,10 +1,9 @@
-package com.example.mylibrary
+package com.airtel.securedblibrary
 
 import android.content.ContentValues
 import android.content.Context
 import android.os.Handler
 import net.sqlcipher.database.SQLiteDatabase
-import net.sqlcipher.database.SQLiteDatabase.CursorFactory
 import net.sqlcipher.database.SQLiteOpenHelper
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -12,12 +11,11 @@ import java.util.concurrent.Executors
 
 class DBHelper private constructor(context: Context, name: String, factory: SQLiteDatabase.CursorFactory?, version: Int) :
     SQLiteOpenHelper(context, name, factory, version), SecureDataInteractionManager {
-
     var executorService: ExecutorService = Executors.newFixedThreadPool(5)
     var dataLoadListener: DataLoadListener? = null
 
     init {
-        DBHelper.context = context
+        Companion.context = context
     }
 
     override fun closeDB() {
@@ -45,6 +43,10 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
             dataLoadListener.onDataLoaded(pair)
         }
         executorService.shutdown()
+    }
+
+    override fun deleteDataSync(key: String): Boolean{
+        return deleteData(key)
     }
 
     override fun getDataSync(key: String): Pair<String, String?> {
@@ -83,6 +85,10 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
         return pair
     }
 
+    fun deleteData(key: String): Boolean {
+        return db!!.delete(SAMPLE_TABLE_NAME, KEY_DATA + "=" + key, null) > 0;
+    }
+
 
     companion object {
         private val DATABASE_VERSION = 1
@@ -98,7 +104,12 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
         @Synchronized
         fun getInstance(context: Context, password: String): SecureDataInteractionManager {
             if (instance == null) {
-                instance = DBHelper(context, DATABASE_NAME, null, DATABASE_VERSION)
+                instance = DBHelper(
+                    context,
+                    DATABASE_NAME,
+                    null,
+                    DATABASE_VERSION
+                )
                 db = instance?.getWritableDatabase(password)
 
             }

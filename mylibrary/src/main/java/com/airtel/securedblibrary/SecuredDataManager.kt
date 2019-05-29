@@ -1,8 +1,6 @@
-package com.example.mylibrary
+package com.airtel.securedblibrary
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.util.Log
 import net.sqlcipher.database.SQLiteDatabase
 
 object SecuredDataManager {
