@@ -3,6 +3,8 @@ package com.airtel.securedblibrary
 import android.content.ContentValues
 import android.content.Context
 import android.os.Handler
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SQLiteOpenHelper
 import java.util.concurrent.ExecutorService
@@ -33,24 +35,22 @@ class DBHelper private constructor(context: Context, name: String, factory: SQLi
         executorService.shutdown()
     }
 
-    override fun getDataAsync(key: String, handler: Handler, dataLoadListener: DataLoadListener) {
-        this.dataLoadListener = dataLoadListener
-        lateinit var pair: Pair<String, String?>
-        executorService.execute {
-            pair = getValue(key)
-        }
-        handler.post {
-            dataLoadListener.onDataLoaded(pair)
-        }
-        executorService.shutdown()
-    }
-
     override fun deleteDataSync(key: String): Boolean{
         return deleteData(key)
     }
 
     override fun getDataSync(key: String): Pair<String, String?> {
         return getValue(key)
+    }
+
+    override fun observeData(key: String): Observable<Pair<String, String?>> {
+        val res: BehaviorSubject<Pair<String, String?>> =  BehaviorSubject.create()
+        executorService.execute { getValue(res,key) }
+        return res
+    }
+
+    private fun getValue(res: BehaviorSubject<Pair<String, String?>>,key:String) {
+        res.onNext(getValue(key))
     }
 
 

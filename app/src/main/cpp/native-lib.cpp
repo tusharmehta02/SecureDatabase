@@ -3,7 +3,7 @@
 extern "C"
 
 JNIEXPORT jstring JNICALL
-Java_com_example_db_MainActivity_stringFromJNIClass(JNIEnv *env, jobject instance) {
+Java_com_airtel_db_MainActivity_stringFromJNIClass(JNIEnv *env, jobject instance) {
 
     // TODO
     std::string returnValue = "K#Y_4_Encrypt!0n";
@@ -12,7 +12,7 @@ Java_com_example_db_MainActivity_stringFromJNIClass(JNIEnv *env, jobject instanc
 extern "C"
 
 JNIEXPORT jstring JNICALL
-Java_com_example_db_MainActivity_stringFromJNI(JNIEnv *env, jobject /* this */) {
+Java_com_airtel_db_MainActivity_stringFromJNI(JNIEnv *env, jobject /* this */) {
     std::string hello = "K#Y_4_Encrypt!0n";
     return env->NewStringUTF(hello.c_str());
 }
